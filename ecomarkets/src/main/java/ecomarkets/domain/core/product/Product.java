@@ -89,7 +89,7 @@ public class Product extends PanacheEntity {
         if(id == null){
             throw new IllegalStateException("product not persisted!");
         }
-        String key = this.id.toString();
+        String key = UUID.randomUUID().toString();
 
         if(productImage != null){
             key = productImage.key();
@@ -98,9 +98,8 @@ public class Product extends PanacheEntity {
                 bucketName,
                 key);
         this.productImage
-//                .addTag("id", this.id.toString())
-//                .addTag("name", this.name)
-                .addTag("description", this.description);
+                .addTag("id", this.id.toString())
+                .addTag("name", this.name);
 
         return productImage;
     }

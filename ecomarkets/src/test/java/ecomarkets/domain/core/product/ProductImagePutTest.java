@@ -59,7 +59,7 @@ public class ProductImagePutTest {
         ProductImage img = prd.productImage();
         assertThat(img, notNullValue());
         assertThat(img.bucket(), equalTo(bucketName));
-        assertThat(img.key(), equalTo(prd.id.toString()));
+        assertThat(img.key(), notNullValue());
 
         byte [] data = imageRepository.find(img);
 
