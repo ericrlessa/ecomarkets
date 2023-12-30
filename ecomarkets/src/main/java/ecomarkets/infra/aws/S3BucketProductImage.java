@@ -52,7 +52,6 @@ public class S3BucketProductImage implements ImageRepository {
                 .key(productImage.key())
                 .build();
 
-        // Delete the object
         s3.deleteObject(deleteRequest);
     }
 
@@ -68,39 +67,36 @@ public class S3BucketProductImage implements ImageRepository {
     }
 
     public String createPresignedGetUrl(ProductImage productImage) {
-//        try (S3Presigner presigner = S3Presigner.create()) {
+        GetObjectRequest objectRequest = GetObjectRequest.builder()
+                .bucket(productImage.bucket())
+                .key(productImage.key())
+                .build();
 
-            GetObjectRequest objectRequest = GetObjectRequest.builder()
-                    .bucket(productImage.bucket())
-                    .key(productImage.key())
-                    .build();
+        GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(presignedUrlDurationInMinutes))  // The URL will expire in 10 minutes.
+                .getObjectRequest(objectRequest)
+                .build();
 
-            GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-                    .signatureDuration(Duration.ofMinutes(presignedUrlDurationInMinutes))  // The URL will expire in 10 minutes.
-                    .getObjectRequest(objectRequest)
-                    .build();
+        PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(presignRequest);
 
-            PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(presignRequest);
-
-            return presignedRequest.url().toExternalForm();
-//        }
+        return presignedRequest.url().toExternalForm();
     }
 
-
-
     @PostConstruct
-    private void createBucket(){
+    private void createBucket() {
         try {
-            HeadBucketRequest headBucketRequest = HeadBucketRequest.builder()
-                    .bucket(bucketName)
-                    .build();
-            s3.headBucket(headBucketRequest);
-        } catch (NoSuchBucketException e) {
-            CreateBucketRequest bucketRequest = CreateBucketRequest.builder()
-                    .bucket(bucketName)
-                    .build();
-            s3.createBucket(bucketRequest);
-        } catch (Exception e){
+            try {
+                HeadBucketRequest headBucketRequest = HeadBucketRequest.builder()
+                        .bucket(bucketName)
+                        .build();
+                s3.headBucket(headBucketRequest);
+            } catch (NoSuchBucketException e) {
+                CreateBucketRequest bucketRequest = CreateBucketRequest.builder()
+                        .bucket(bucketName)
+                        .build();
+                s3.createBucket(bucketRequest);
+            }
+        } catch (Exception e) {
             //FIXME add log or change this. But should not prohibit the startup of the app
         }
     }
@@ -112,16 +108,8 @@ public class S3BucketProductImage implements ImageRepository {
         return tagsS3;
     }
 
-    private Tag parseTagS3(ecomarkets.domain.core.product.image.Tag t){
-//        try {
-//            String key = URLEncoder.encode(t.key(), StandardCharsets.UTF_8.toString());
-//            String value = URLEncoder.encode(t.value(), StandardCharsets.UTF_8.toString());
-            String key = t.key();
-            String value = t.value();
-            return Tag.builder().key(key).value(value).build();
-//        } catch (UnsupportedEncodingException e) {
-//            throw new RuntimeException(e);
-//        }
+    private Tag parseTagS3(ecomarkets.domain.core.product.image.Tag t) {
+        return Tag.builder().key(t.key()).value(t.value()).build();
     }
 
     public String getBucketName(){

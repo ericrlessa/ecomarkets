@@ -98,8 +98,8 @@ public class Product extends PanacheEntity {
                 bucketName,
                 key);
         this.productImage
-                .addTag("id", this.id.toString())
-                .addTag("name", this.name);
+                .addTag("productId", this.id.toString())
+                .addTag("productName", this.name);
 
         return productImage;
     }

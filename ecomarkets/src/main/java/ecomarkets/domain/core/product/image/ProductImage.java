@@ -1,12 +1,10 @@
 package ecomarkets.domain.core.product.image;
 
-import com.google.errorprone.annotations.Immutable;
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.quarkus.hibernate.orm.panache.PanacheEntityBase;
 import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Transient;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +16,7 @@ public class ProductImage extends PanacheEntityBase {
     @Column(name = "bucket_key")
     private String key;
     private String bucket;
-    @ElementCollection
+    @Transient
     private List<Tag> tags;
 
     public ProductImage(String bucket, String key, List<Tag> tags){
