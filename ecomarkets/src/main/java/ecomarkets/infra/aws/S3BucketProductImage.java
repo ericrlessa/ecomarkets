@@ -9,9 +9,16 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,6 +26,10 @@ import java.util.stream.Collectors;
 public class S3BucketProductImage implements ImageRepository {
     @ConfigProperty(name = "bucket.name")
     private String bucketName;
+
+    @ConfigProperty(name = "presigned.url.duration.in.minutes")
+    private Integer presignedUrlDurationInMinutes;
+
     @Inject
     private S3Client s3;
 
@@ -56,6 +67,27 @@ public class S3BucketProductImage implements ImageRepository {
         }
     }
 
+    public String createPresignedGetUrl(ProductImage productImage) {
+        try (S3Presigner presigner = S3Presigner.create()) {
+
+            GetObjectRequest objectRequest = GetObjectRequest.builder()
+                    .bucket(productImage.bucket())
+                    .key(productImage.key())
+                    .build();
+
+            GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
+                    .signatureDuration(Duration.ofMinutes(10))  // The URL will expire in 10 minutes.
+                    .getObjectRequest(objectRequest)
+                    .build();
+
+            PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(presignRequest);
+
+            return presignedRequest.url().toExternalForm();
+        }
+    }
+
+
+
     @PostConstruct
     private void createBucket(){
         try {
@@ -75,9 +107,21 @@ public class S3BucketProductImage implements ImageRepository {
 
     private List<Tag> getTags(ProductImage productImage) {
         List<Tag> tagsS3 = productImage.tags().stream().map(
-                t -> Tag.builder().key(t.key()).value(t.value()).build()
+                t -> parseTagS3(t)
         ).collect(Collectors.toList());
         return tagsS3;
+    }
+
+    private Tag parseTagS3(ecomarkets.domain.core.product.image.Tag t){
+//        try {
+//            String key = URLEncoder.encode(t.key(), StandardCharsets.UTF_8.toString());
+//            String value = URLEncoder.encode(t.value(), StandardCharsets.UTF_8.toString());
+            String key = t.key();
+            String value = t.value();
+            return Tag.builder().key(key).value(value).build();
+//        } catch (UnsupportedEncodingException e) {
+//            throw new RuntimeException(e);
+//        }
     }
 
     public String getBucketName(){

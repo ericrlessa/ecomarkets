@@ -8,6 +8,7 @@ import jakarta.transaction.Transactional;
 import org.apache.http.HttpStatus;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
@@ -32,14 +33,17 @@ public class ProductImageGetTest {
     @ConfigProperty(name = "bucket.name")
     String bucketName;
 
-    static Product product;
+    Product product;
 
     @Inject
     ImageRepository imageRepository;
 
-    @BeforeAll
+    @Inject
+    S3Client s3Client;
+
+    @BeforeEach
     @Transactional
-    static void startProductFixture(){
+    void startProductFixture(){
         product = new ProductBuilder().
                 name("Tomate").
                 description("Bolo de Banana Fitness (Zero Glúten e Lactose)").
@@ -48,13 +52,14 @@ public class ProductImageGetTest {
                 price(10, 50).create();
 
         product.persist();
+
+        ProductImage pi = product.newImage(bucketName);
     }
     @Test
     public void testGetS3ProductImage() {
         Path fileToUpload = Paths.get("src/test/resources/ecomarkets/domain/core/product/acerola.jpg");
-        ProductImage pi = product.newImage(bucketName);
 
-        imageRepository.save(fileToUpload, pi);
+        imageRepository.save(fileToUpload, product.productImage());
 
         byte [] file = given()
             .when()
@@ -67,16 +72,49 @@ public class ProductImageGetTest {
 
         assertThat(file, notNullValue());
 
-        imageRepository.delete(pi);
+        imageRepository.delete(product.productImage());
 
-//        String localFilePath = "/tmp/test.jpg";
-//
-//        try (FileOutputStream fos = new FileOutputStream(localFilePath)) {
-//            fos.write(file);
-//            System.out.println("File downloaded and saved at: " + localFilePath);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
+        //saveFileLocalToVerifyManualy(file);
+    }
 
+    @Test
+    public void testPresignedGetUrlS3() {
+        Path fileToUpload = Paths.get("src/test/resources/ecomarkets/domain/core/product/acerola.jpg");
+        ProductImage pi = product.newImage(bucketName);
+
+        imageRepository.save(fileToUpload, pi);
+
+        String preAssignedUrl = given()
+                .when()
+                .get("/api/product/%d/image/presignedGetUrl".formatted(product.id))
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .extract()
+                .body()
+                .asString();
+
+        byte [] file = given()
+                .when()
+                .get(preAssignedUrl)
+                .then()
+                .statusCode(HttpStatus.SC_OK)
+                .extract()
+                .body()
+                .asByteArray();
+
+        assertThat(file, notNullValue());
+
+        saveFileLocalToVerifyManualy(file);
+    }
+
+    private void saveFileLocalToVerifyManualy(byte [] file){
+        String localFilePath = "/tmp/test.jpg";
+
+        try (FileOutputStream fos = new FileOutputStream(localFilePath)) {
+            fos.write(file);
+            System.out.println("File downloaded and saved at: " + localFilePath);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
