@@ -14,9 +14,6 @@ import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignReques
 import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.List;
@@ -32,6 +29,9 @@ public class S3BucketProductImage implements ImageRepository {
 
     @Inject
     private S3Client s3;
+
+    @Inject
+    S3Presigner presigner;
 
     public void save(Path file,
                      ProductImage productImage) {
@@ -68,7 +68,7 @@ public class S3BucketProductImage implements ImageRepository {
     }
 
     public String createPresignedGetUrl(ProductImage productImage) {
-        try (S3Presigner presigner = S3Presigner.create()) {
+//        try (S3Presigner presigner = S3Presigner.create()) {
 
             GetObjectRequest objectRequest = GetObjectRequest.builder()
                     .bucket(productImage.bucket())
@@ -76,14 +76,14 @@ public class S3BucketProductImage implements ImageRepository {
                     .build();
 
             GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
-                    .signatureDuration(Duration.ofMinutes(10))  // The URL will expire in 10 minutes.
+                    .signatureDuration(Duration.ofMinutes(presignedUrlDurationInMinutes))  // The URL will expire in 10 minutes.
                     .getObjectRequest(objectRequest)
                     .build();
 
             PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(presignRequest);
 
             return presignedRequest.url().toExternalForm();
-        }
+//        }
     }
 
 

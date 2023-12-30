@@ -66,7 +66,7 @@ public class ProductImageGetTest {
 
         imageRepository.delete(product.productImage());
 
-        //saveFileLocalToVerifyManualy(file);
+        //saveFileLocalToVerifyManually(file);
     }
 
     @Test
@@ -87,7 +87,6 @@ public class ProductImageGetTest {
 
         byte [] file = given()
                 .baseUri(preAssignedUrl)
-                .urlEncodingEnabled(false)
                 .get()
                 .then()
                 .statusCode(HttpStatus.SC_OK)
@@ -97,15 +96,14 @@ public class ProductImageGetTest {
 
         assertThat(file, notNullValue());
 
-        saveFileLocalToVerifyManualy(file);
+     //   saveFileLocalToVerifyManually(file);
     }
 
-    private void saveFileLocalToVerifyManualy(byte [] file){
+    private void saveFileLocalToVerifyManually(byte [] file){
         String localFilePath = "/tmp/test.jpg";
 
         try (FileOutputStream fos = new FileOutputStream(localFilePath)) {
             fos.write(file);
-            System.out.println("File downloaded and saved at: " + localFilePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
