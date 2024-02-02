@@ -15,8 +15,6 @@ import java.util.List;
 @Path("/basket")
 public class BasketResource {
 
-   
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public List<Basket> getBaskets() {

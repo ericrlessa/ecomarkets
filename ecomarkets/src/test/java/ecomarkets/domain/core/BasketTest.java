@@ -19,7 +19,7 @@ import ecomarkets.domain.core.product.Product;
 import ecomarkets.domain.core.product.ProductBuilder;
 import ecomarkets.domain.register.Address;
 import ecomarkets.domain.register.CPF;
-import ecomarkets.domain.register.Email;
+import ecomarkets.domain.register.EmailAddress;
 import ecomarkets.domain.register.Telephone;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
@@ -31,7 +31,7 @@ public class BasketTest {
 
     final static Partner PARTNER_JOHN = Partner.of("Joao",
           CPF.of("12122112") ,
-          Email.of("joao@gmail.com"),
+          EmailAddress.of("joao@gmail.com"),
           LocalDate.now(),
           Telephone.of("27", "123456789"),
             Address.of("Brasil", 
