@@ -2,8 +2,11 @@ package ecomarkets.rs;
 
 import ecomarkets.domain.core.basket.Basket;
 import ecomarkets.domain.core.basket.BasketItem;
+import ecomarkets.domain.core.basket.BasketEvent;
 import ecomarkets.domain.core.partner.PartnerId;
 import io.quarkus.panache.common.Sort;
+import jakarta.enterprise.event.Event;
+import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -14,6 +17,9 @@ import java.util.List;
 
 @Path("/basket")
 public class BasketResource {
+
+    @Inject
+    Event<BasketEvent> basketEvent;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -82,8 +88,9 @@ public class BasketResource {
             throw new NotFoundException("Basket do not exists for id " + id);
         }
 
-        basket.reserveBasket();
-        
+        BasketEvent event = basket.reserveBasket();
+        basketEvent.fire(event);
+
         return basket;
     }
   

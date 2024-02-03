@@ -35,8 +35,17 @@ public class Basket extends PanacheEntity {
         return result;
     }
 
-    public void reserveBasket(){
+    public BasketEvent reserveBasket(){
+        if(this.id == null){
+            throw new IllegalStateException("Basket not created yet!");
+        }
+
+        if(this.items == null || this.items.isEmpty()){
+            throw new IllegalStateException("There are no items added to the Basket!");
+        }
+
         this.reservedDate = LocalDateTime.now();
+        return new BasketEvent(basketId(), BasketEvent.EventType.RESERVED);
     }
     
     public void deliverBasket(){
@@ -80,6 +89,14 @@ public class Basket extends PanacheEntity {
             return;
 
         items.forEach(this::addItem);
+    }
+
+    public Double totalPayment(){
+        return this.items.stream().mapToDouble(BasketItem::totalPayment).sum();
+    }
+
+    public BasketId basketId(){
+        return BasketId.of(this.id);
     }
 
 

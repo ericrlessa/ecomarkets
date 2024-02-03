@@ -2,17 +2,29 @@ package ecomarkets.domain.notification.email;
 
 import ecomarkets.domain.register.EmailAddress;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.AttributeOverrides;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
 
-import java.util.Optional;
-
+@Entity
 public class Email extends PanacheEntity {
+
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "email_from"))
+    })
     private EmailAddress from;
+    @AttributeOverrides({
+            @AttributeOverride(name = "value", column = @Column(name = "email_to"))
+    })
     private EmailAddress to;
     private String subject;
     private String body;
-    private String messageIdSent;
+
+    private Email(){}
 
     public Email(EmailAddress from, EmailAddress to, String subject, String body) {
+        this();
         this.from = from;
         this.to = to;
         this.subject = subject;
@@ -35,11 +47,4 @@ public class Email extends PanacheEntity {
         return body;
     }
 
-    public String getMessageIdSent() {
-        return messageIdSent;
-    }
-
-    public void send(Optional<String> messageIdSent) {
-        this.messageIdSent = messageIdSent.orElse(null);
-    }
 }
