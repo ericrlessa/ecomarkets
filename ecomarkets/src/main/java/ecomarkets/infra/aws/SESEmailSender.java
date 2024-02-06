@@ -4,6 +4,7 @@ import ecomarkets.domain.notification.email.Email;
 import ecomarkets.domain.notification.email.EmailNotificationService;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import software.amazon.awssdk.services.ses.SesClient;
 
 @ApplicationScoped
@@ -12,6 +13,7 @@ public class SESEmailSender implements EmailNotificationService {
     @Inject
     SesClient ses;
 
+    @Transactional
     public void send(Email email) {
         final String messageId = ses.sendEmail(req -> req
                 .source(email.getFrom().value())
