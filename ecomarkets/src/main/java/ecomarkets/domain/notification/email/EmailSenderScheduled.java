@@ -6,21 +6,24 @@ import ecomarkets.domain.core.partner.Partner;
 import ecomarkets.domain.register.EmailAddress;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 import java.text.MessageFormat;
 import java.util.List;
 
 @ApplicationScoped
 public class EmailSenderScheduled {
+
+    @ConfigProperty(name = "email.from.notification")
+    private String emailFrom;
     @Inject
     EmailNotificationService emailNotificationService;
     @Scheduled(every="2m")
     public void sendPendingEmails() {
-        List<BasketEvent> emailList = BasketEvent.findAll().list();
+        List<BasketEvent> basketEvents = BasketEvent.findAll().list();
 
-        emailList.stream().forEach(e ->{
+        basketEvents.stream().forEach(e ->{
             emailNotificationService.send(parse(e));
             e.delete();
         });
@@ -30,7 +33,7 @@ public class EmailSenderScheduled {
         Basket basket = Basket.findById(event.getBasketId().id());
         Partner partner = Partner.findById(basket.getPartnerId().id());
 
-        Email email = new Email(EmailAddress.of("noreply@ecomarkets.com"),
+        Email email = new Email(EmailAddress.of(emailFrom),
                 partner.getEmailAddress(),
                 getSubject(event.getType()),
                 getBody(basket, partner, event.getType())

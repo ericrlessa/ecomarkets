@@ -5,12 +5,15 @@ import ecomarkets.domain.register.EmailAddress;
 import io.quarkus.test.TestTransaction;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.Test;
 import software.amazon.awssdk.services.ses.SesClient;
 import software.amazon.awssdk.services.ses.model.VerifyEmailIdentityRequest;
 @QuarkusTest
 public class SESEmailSenderTest {
 
+    @ConfigProperty(name = "email.from.notification")
+    private String emailFrom;
     @Inject
     SESEmailSender sesEmailSender;
     @Inject
@@ -20,13 +23,13 @@ public class SESEmailSenderTest {
     public void testSendEmail(){
 
         VerifyEmailIdentityRequest request = VerifyEmailIdentityRequest.builder()
-                .emailAddress("noreply@ecomarkets.com")
+                .emailAddress(emailFrom)
                 .build();
 
         ses.verifyEmailIdentity(request);
 
-        Email email = new Email(EmailAddress.of("noreply@ecomarkets.com"),
-                EmailAddress.of("ericrlessa@gmail.com"),
+        Email email = new Email(EmailAddress.of(emailFrom),
+                EmailAddress.of("test@ecomarkets.com"),
                 "Test email notification",
                 " This is a email body!"
         );
