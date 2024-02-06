@@ -1,7 +1,8 @@
 package ecomarkets.domain.core.basket;
 
-
 import ecomarkets.domain.core.partner.PartnerId;
+import ecomarkets.domain.core.product.Price;
+import ecomarkets.domain.core.product.Product;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
@@ -72,7 +73,8 @@ public class Basket extends PanacheEntity {
         return new ArrayList<>(this.items);
     }
 
-    public void addItem(BasketItem item){
+    public void addItem(Product product,
+                        Integer amount){
         if(this.reservedDate != null){
             throw new IllegalStateException("Basket Already scheduled to delivery.");
         }
@@ -81,14 +83,12 @@ public class Basket extends PanacheEntity {
             throw new IllegalArgumentException("product is null");
         }
 
-        this.items.add(item);
+        this.items.add(BasketItem.of(product.productId(), amount, totalPayment(product.getPrice(), amount)));
     }
 
-    public void addItems(Collection<BasketItem> items){
-        if(items == null)
-            return;
-
-        items.forEach(this::addItem);
+    //TODO WIP - it is necessary refactor for a better solution
+    private Double totalPayment(Price price, Integer amount){
+        return (1.0 + price.unit() + price.cents()) * amount;
     }
 
     public Double totalPayment(){

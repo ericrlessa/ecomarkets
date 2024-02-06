@@ -2,15 +2,12 @@ package ecomarkets.infra.aws;
 
 import ecomarkets.domain.notification.email.Email;
 import ecomarkets.domain.notification.email.EmailNotificationService;
-import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import software.amazon.awssdk.services.ses.SesClient;
 
-import java.util.List;
-
 @ApplicationScoped
-public class SESEmailSenderScheduled implements EmailNotificationService {
+public class SESEmailSender implements EmailNotificationService {
 
     @Inject
     SesClient ses;

@@ -1,6 +1,5 @@
 package ecomarkets.domain.core.basket;
 
-import ecomarkets.domain.core.basket.BasketId;
 import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import jakarta.persistence.Entity;
 
