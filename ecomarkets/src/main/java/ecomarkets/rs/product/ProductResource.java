@@ -2,7 +2,7 @@ package ecomarkets.rs.product;
 
 import ecomarkets.domain.core.product.Product;
 import ecomarkets.domain.core.product.ProductId;
-import ecomarkets.domain.core.product.ProductStock;
+import ecomarkets.domain.core.product.stock.ProductStock;
 import io.quarkus.panache.common.Sort;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.*;

@@ -1,5 +1,8 @@
 package ecomarkets.domain.core.basket;
 
+import com.google.errorprone.annotations.Immutable;
+import ecomarkets.domain.core.basket.event.BasketDeliveredEvent;
+import ecomarkets.domain.core.basket.event.BasketReservedEvent;
 import ecomarkets.domain.core.partner.PartnerId;
 import ecomarkets.domain.core.product.Price;
 import ecomarkets.domain.core.product.Product;
@@ -10,18 +13,14 @@ import jakarta.persistence.Entity;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Optional;
 
 @Entity
+@Immutable
 public class Basket extends PanacheEntity {
  
     private PartnerId partnerId;
 
     private LocalDateTime creationDate;
-    
-    private LocalDateTime reservedDate;
-    
-    private LocalDateTime deliveredDate;
     
     @ElementCollection
     private Collection<BasketItem> items;
@@ -36,7 +35,15 @@ public class Basket extends PanacheEntity {
         return result;
     }
 
-    public BasketEvent reserveBasket(){
+    public boolean isReserved(){
+        return BasketReservedEvent.count("basketId", basketId()) > 0;
+    }
+
+    public boolean isDelivered(){
+        return BasketDeliveredEvent.count("basketId", basketId()) > 0;
+    }
+
+    public BasketReservedEvent reserveBasket(){
         if(this.id == null){
             throw new IllegalStateException("Basket not created yet!");
         }
@@ -45,24 +52,22 @@ public class Basket extends PanacheEntity {
             throw new IllegalStateException("There are no items added to the Basket!");
         }
 
-        this.reservedDate = LocalDateTime.now();
-        return new BasketEvent(basketId(), BasketEvent.EventType.RESERVED);
+        if(isReserved()){
+            throw new IllegalStateException("Basket already reserved!");
+        }
+
+        return new BasketReservedEvent(basketId());
     }
-    
-    public void deliverBasket(){
-        this.deliveredDate = LocalDateTime.now();
+
+    public BasketDeliveredEvent deliverBasket(){
+        if(isDelivered()){
+            throw new IllegalStateException("Basket already delivered!");
+        }
+        return new BasketDeliveredEvent(this.basketId());
     }
 
     public LocalDateTime getCreationDate(){
         return this.creationDate;
-    }
-    
-    public Optional<LocalDateTime> getReservedDate(){
-        return Optional.ofNullable(this.reservedDate);
-    }
-    
-    public Optional<LocalDateTime> getDeliveredDate(){
-        return Optional.ofNullable(this.deliveredDate);
     }
     
     public PartnerId getPartnerId(){
@@ -75,10 +80,9 @@ public class Basket extends PanacheEntity {
 
     public void addItem(Product product,
                         Integer amount){
-        if(this.reservedDate != null){
+        if(BasketReservedEvent.count("basketId", basketId()) > 0){
             throw new IllegalStateException("Basket Already scheduled to delivery.");
         }
-
         if(this.items == null){
             throw new IllegalArgumentException("product is null");
         }

@@ -1,7 +1,7 @@
 package ecomarkets.rs.basket;
 
 import ecomarkets.domain.core.basket.Basket;
-import ecomarkets.domain.core.basket.BasketEvent;
+import ecomarkets.domain.core.basket.event.BasketReservedEvent;
 import ecomarkets.domain.core.partner.PartnerId;
 import ecomarkets.domain.core.product.Product;
 import io.quarkus.panache.common.Sort;
@@ -19,7 +19,7 @@ import java.util.List;
 public class BasketResource {
 
     @Inject
-    Event<BasketEvent> basketEvent;
+    Event<BasketReservedEvent> basketEvent;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -89,7 +89,7 @@ public class BasketResource {
             throw new NotFoundException("Basket do not exists for id " + id);
         }
 
-        BasketEvent event = basket.reserveBasket();
+        BasketReservedEvent event = basket.reserveBasket();
         basketEvent.fire(event);
 
         return basket;
