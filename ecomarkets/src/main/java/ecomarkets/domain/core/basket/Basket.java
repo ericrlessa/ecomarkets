@@ -3,6 +3,7 @@ package ecomarkets.domain.core.basket;
 import com.google.errorprone.annotations.Immutable;
 import ecomarkets.domain.core.basket.event.BasketDeliveredEvent;
 import ecomarkets.domain.core.basket.event.BasketReservedEvent;
+import ecomarkets.domain.core.fair.FairId;
 import ecomarkets.domain.core.partner.PartnerId;
 import ecomarkets.domain.core.product.Price;
 import ecomarkets.domain.core.product.Product;
@@ -17,7 +18,9 @@ import java.util.Collection;
 @Entity
 @Immutable
 public class Basket extends PanacheEntity {
- 
+
+    private FairId fairId;
+
     private PartnerId partnerId;
 
     private LocalDateTime creationDate;
@@ -27,11 +30,12 @@ public class Basket extends PanacheEntity {
 
     private Basket(){}
         
-    public static Basket of(PartnerId partnerId){
+    public static Basket of(FairId fairId, PartnerId partnerId){
         Basket result = new Basket();
         result.creationDate = LocalDateTime.now();
         result.partnerId = partnerId;
         result.items = new ArrayList<>();
+        result.fairId = fairId;
         return result;
     }
 

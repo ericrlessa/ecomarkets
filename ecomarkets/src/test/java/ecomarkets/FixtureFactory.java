@@ -1,13 +1,14 @@
 package ecomarkets;
 
+import ecomarkets.domain.core.fair.Fair;
+import ecomarkets.domain.core.fair.ProductStock;
+import ecomarkets.domain.core.fair.ShoppingPeriod;
 import ecomarkets.domain.core.farmer.Farmer;
 import ecomarkets.domain.core.farmer.FarmerId;
 import ecomarkets.domain.core.partner.Partner;
 import ecomarkets.domain.core.product.MeasureUnit;
 import ecomarkets.domain.core.product.Product;
 import ecomarkets.domain.core.product.ProductBuilder;
-import ecomarkets.domain.core.product.stock.ProductStock;
-import ecomarkets.domain.core.product.stock.ValidityPeriod;
 import ecomarkets.domain.register.Address;
 import ecomarkets.domain.register.CPF;
 import ecomarkets.domain.register.EmailAddress;
@@ -31,9 +32,13 @@ public class FixtureFactory {
                 price(10, 50);
     }
 
-    public static ProductStock getProductStock(FarmerId farmerId, Product product, Integer amount){
-        ValidityPeriod validityPeriod = ValidityPeriod.of(LocalDateTime.now(), LocalDateTime.now().plusWeeks(1));
-        return ProductStock.of(farmerId, product, amount, validityPeriod);
+    public static ProductStock getProductStock(Fair fair, FarmerId farmerId, Product product, Integer amount){
+        return ProductStock.of(fair, farmerId, product, amount);
+    }
+
+    public static Fair getFair(){
+        ShoppingPeriod shoppingPeriod = ShoppingPeriod.of(LocalDateTime.now(), LocalDateTime.now().plusWeeks(1));
+        return new Fair(shoppingPeriod);
     }
 
     public static Farmer createFarmer() {

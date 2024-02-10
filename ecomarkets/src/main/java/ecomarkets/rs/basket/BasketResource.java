@@ -2,7 +2,6 @@ package ecomarkets.rs.basket;
 
 import ecomarkets.domain.core.basket.Basket;
 import ecomarkets.domain.core.basket.event.BasketReservedEvent;
-import ecomarkets.domain.core.partner.PartnerId;
 import ecomarkets.domain.core.product.Product;
 import io.quarkus.panache.common.Sort;
 import jakarta.enterprise.event.Event;
@@ -34,17 +33,15 @@ public class BasketResource {
         return Basket.findById(id);
     }
     
-    @Path("/{partnerId}")
     @POST
     @Transactional
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
-    public Response createBasket(@PathParam("partnerId") Long partnerId,
-    Collection<BasketItemForm> items) {
+    public Response createBasket(CreateBasketForm createBasketForm) {
         
-        Basket basket = Basket.of(PartnerId.of(partnerId));
-        if(items != null){
-            items.forEach(it -> basket.addItem(Product.findById(it.productId().id()), it.amount()));
+        Basket basket = Basket.of(createBasketForm.fairId(), createBasketForm.partnerId());
+        if(createBasketForm.items() != null){
+            createBasketForm.items().forEach(it -> basket.addItem(Product.findById(it.productId().id()), it.amount()));
         }
         basket.persist();
 

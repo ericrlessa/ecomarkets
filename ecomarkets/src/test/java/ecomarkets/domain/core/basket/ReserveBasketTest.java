@@ -3,6 +3,7 @@ package ecomarkets.domain.core.basket;
 import ecomarkets.FixtureFactory;
 import ecomarkets.domain.core.Tenant;
 import ecomarkets.domain.core.basket.event.BasketReservedEvent;
+import ecomarkets.domain.core.fair.Fair;
 import ecomarkets.domain.core.partner.Partner;
 import ecomarkets.domain.core.product.Product;
 import io.quarkus.test.junit.QuarkusTest;
@@ -33,10 +34,12 @@ public class ReserveBasketTest {
         Partner.persist(PARTNER_JOHN);
 
         product = FixtureFactory.createProduct();
-
         product.persist();
 
-        basket = Basket.of(PARTNER_JOHN.partnerId());
+        Fair fair = FixtureFactory.getFair();
+        fair.persist();
+
+        basket = Basket.of(fair.fairId(), PARTNER_JOHN.partnerId());
 
         basket.addItem(product, 5);
 
