@@ -2,7 +2,7 @@ package ecomarkets;
 
 import ecomarkets.domain.core.fair.Fair;
 import ecomarkets.domain.core.fair.FairId;
-import ecomarkets.domain.core.fair.ProductStock;
+import ecomarkets.domain.core.ProductStock;
 import ecomarkets.domain.core.fair.ShoppingPeriod;
 import ecomarkets.domain.core.farmer.Farmer;
 import ecomarkets.domain.core.farmer.FarmerId;

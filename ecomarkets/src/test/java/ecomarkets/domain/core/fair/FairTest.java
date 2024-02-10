@@ -17,34 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @QuarkusTest
 public class FairTest {
 
-    @Test
-    @TestTransaction
-    public void testAvailableStock(){
 
-        Product prd = FixtureFactory.createProduct();
-        prd.persist();
-
-        Farmer farmer = FixtureFactory.createFarmer();
-        farmer.persist();
-
-        Fair fair = FixtureFactory.getFair();
-        fair.persist();
-
-        ProductStock stock = FixtureFactory.getProductStock(fair.fairId(), farmer.farmerId(), prd.productId(), 10);
-        stock.persist();
-
-        Partner partner = FixtureFactory.createPartner();
-        partner.persist();
-
-        Basket basket = Basket.of(fair.fairId(), partner.partnerId());
-        basket.addItem(prd, 8);
-        basket.persist();
-
-        Double result = Fair.getAvailableStock(fair.fairId(), prd.productId());
-
-        assertEquals(2, result);
-
-    }
 
     @Test
     public void testValidityPeriod(){

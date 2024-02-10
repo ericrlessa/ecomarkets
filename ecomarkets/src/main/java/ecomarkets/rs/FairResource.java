@@ -2,6 +2,7 @@ package ecomarkets.rs;
 
 import ecomarkets.domain.core.fair.Fair;
 import ecomarkets.domain.core.fair.FairId;
+import ecomarkets.domain.core.ProductStock;
 import ecomarkets.domain.core.product.Product;
 import ecomarkets.domain.core.product.ProductId;
 import jakarta.ws.rs.*;
@@ -27,6 +28,6 @@ public class FairResource {
             throw new NotFoundException("fair with id %d not found.".formatted(fairId));
         }
 
-        return Fair.getAvailableStock(FairId.of(fairId), ProductId.of(productId));
+        return ProductStock.getAvailableStock(FairId.of(fairId), ProductId.of(productId));
     }
 }
