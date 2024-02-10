@@ -30,7 +30,7 @@ public class FairTest {
         Fair fair = FixtureFactory.getFair();
         fair.persist();
 
-        ProductStock stock = FixtureFactory.getProductStock(fair, farmer.farmerId(), prd, 10);
+        ProductStock stock = FixtureFactory.getProductStock(fair.fairId(), farmer.farmerId(), prd.productId(), 10);
         stock.persist();
 
         Partner partner = FixtureFactory.createPartner();
