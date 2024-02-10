@@ -107,4 +107,7 @@ public class Basket extends PanacheEntity {
         return BasketId.of(this.id);
     }
 
+    public FairId getFairId() {
+        return fairId;
+    }
 }

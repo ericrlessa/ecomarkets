@@ -49,7 +49,7 @@ public class CreateBasketTest {
                 .body("""
                {"fairId": {"id": %d},
                 "partnerId": {"id": %d}}
-        """.formatted(fair.fairId(), PARTNER_JOHN.partnerId()))
+        """.formatted(fair.id, PARTNER_JOHN.id))
                 .post("/api/basket/")
         .then()
         .assertThat();
@@ -81,7 +81,7 @@ public class CreateBasketTest {
         final ValidatableResponse vrCreate = given().contentType("application/json")
         .body("""
              {"fairId": {"id": %d},
-              "partnerId": {"id": %d}
+              "partnerId": {"id": %d},
               "items":
                [
                 {"productId": {"id": %d},
