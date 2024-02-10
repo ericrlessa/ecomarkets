@@ -5,8 +5,11 @@ import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
 
+import static com.tngtech.archunit.core.domain.JavaClass.Predicates.resideInAPackage;
 import static com.tngtech.archunit.library.Architectures.layeredArchitecture;
 import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
+import static com.tngtech.archunit.base.DescribedPredicate.alwaysTrue;
+
 
 @AnalyzeClasses(packages = "ecomarkets", importOptions = ImportOption.DoNotIncludeTests.class)
 public class ArchitectureTest {
@@ -22,7 +25,9 @@ public class ArchitectureTest {
             .whereLayer("Domain").mayNotAccessAnyLayer();
 
 
-//    @ArchTest
-//    static final ArchRule no_cycles =
-//            slices().matching("ecomarkets.(**)..").should().beFreeOfCycles().ignoreDependency("ecomarkets.domain.core.basket", "ecomarkets.domain.core.basket.event");
+    @ArchTest
+    static final ArchRule no_cycles =
+            slices().matching("ecomarkets.(**)..").should().beFreeOfCycles()
+                    .ignoreDependency(resideInAPackage("..event.."), alwaysTrue());
+
 }

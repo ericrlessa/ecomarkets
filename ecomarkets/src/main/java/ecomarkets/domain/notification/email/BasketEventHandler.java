@@ -1,9 +1,8 @@
-package ecomarkets.domain.core.basket;
+package ecomarkets.domain.notification.email;
 
 import ecomarkets.domain.core.basket.event.BasketDeliveredEvent;
 import ecomarkets.domain.core.basket.event.BasketEvent;
 import ecomarkets.domain.core.basket.event.BasketReservedEvent;
-import ecomarkets.domain.notification.email.EmailPendingToSend;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.event.Observes;
 
@@ -27,3 +26,4 @@ public class BasketEventHandler {
     }
 
 }
+
