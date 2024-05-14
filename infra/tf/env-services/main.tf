@@ -40,7 +40,7 @@ module "web_task" {
     db_app_username = var.db_app_username
     db_app_password = var.db_app_password
 
-    oidc_provider = var.oidc_provider
+    oidc_auth_server_url = var.oidc_auth_server_url
     oidc_client_id = var.oidc_client_id
     oidc_client_secret = var.oidc_client_secret
 
@@ -75,7 +75,7 @@ module "api_task" {
     db_app_username = var.db_app_username
     db_app_password = var.db_app_password
 
-    oidc_provider = var.oidc_provider
+    oidc_auth_server_url = var.oidc_auth_server_url
     oidc_client_id = var.oidc_client_id
     oidc_client_secret = var.oidc_client_secret
 
@@ -110,7 +110,7 @@ module "vdn_task" {
     db_app_username = var.db_app_username
     db_app_password = var.db_app_password
 
-    oidc_provider = var.oidc_provider
+    oidc_auth_server_url = var.oidc_auth_server_url
     oidc_client_id = var.oidc_client_id
     oidc_client_secret = var.oidc_client_secret
 
@@ -145,7 +145,7 @@ module "app_task" {
     db_app_username = var.db_app_username
     db_app_password = var.db_app_password
 
-    oidc_provider = var.oidc_provider
+    oidc_auth_server_url = var.oidc_auth_server_url
     oidc_client_id = var.oidc_client_id
     oidc_client_secret = var.oidc_client_secret
 
