@@ -37,7 +37,7 @@ variable "db_name" {}
 variable "db_app_username" {}
 variable "db_app_password" {}
 
-variable "oidc_provider" {} 
+variable "oidc_auth_server_url" {}
 variable "oidc_client_id" {}
 variable "oidc_client_secret" {}
 
