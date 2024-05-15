@@ -51,3 +51,6 @@ variable "listener_arn" {}
 variable "priority" {
     type = number
 }
+
+variable "health_check_path" {}
+variable "count_instances" {}
