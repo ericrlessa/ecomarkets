@@ -85,6 +85,9 @@ resource "aws_cognito_user_pool_client" "app_client" {
   allowed_oauth_flows                           = [
     "code",
   ]
+
+  generate_secret                               = true
+
   allowed_oauth_flows_user_pool_client          = true
   allowed_oauth_scopes                          = [
     "email",
@@ -129,7 +132,7 @@ resource "aws_cognito_identity_provider" "google" {
   provider_type = "Google"
 
   provider_details = {
-    authorize_scopes = "email"
+    authorize_scopes = "openid email profile"
     client_id        = var.oidc_google_id_text
     client_secret    = var.oidc_google_secret_text
   }
@@ -138,6 +141,11 @@ resource "aws_cognito_identity_provider" "google" {
     email    = "email"
     username = "sub"
   }
+}
+
+resource "aws_cognito_user_pool_domain" "main" {
+  domain       = var.env_id
+  user_pool_id = aws_cognito_user_pool.main.id
 }
 
 
