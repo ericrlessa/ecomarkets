@@ -1,5 +1,7 @@
 variable env_id {}
 
+variable domain_name {}
+
 variable aws_region {
   default = "us-east-1"
 }
