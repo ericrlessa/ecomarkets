@@ -145,8 +145,8 @@ resource "aws_cognito_identity_provider" "google" {
 
   provider_details = {
     authorize_scopes = "openid email profile"
-    client_id        = data.aws_ssm_parameter.oidc_google_id_text
-    client_secret    = data.aws_ssm_parameter.oidc_google_secret_text
+    client_id        = data.aws_ssm_parameter.oidc_google_id_text.value
+    client_secret    = data.aws_ssm_parameter.oidc_google_secret_text.value
   }
 
   attribute_mapping = {
