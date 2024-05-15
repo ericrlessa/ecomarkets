@@ -67,7 +67,7 @@ resource "aws_lb_target_group" "task_target_group" {
     healthy_threshold   = 3
     unhealthy_threshold = 3
     timeout             = 5
-    path                = "/${var.task_id}/"
+    path                = "${var.health_check_path}"
     protocol            = "HTTP"
     matcher             = "200"
     interval            = 15
@@ -189,5 +189,5 @@ resource "aws_ecs_service" "task_service" {
     container_port   = var.container_port
   }
 
-  desired_count = 1
+  desired_count = var.count_instances
 }
