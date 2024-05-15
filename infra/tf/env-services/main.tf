@@ -18,6 +18,7 @@ module "web_task" {
     source = "../modules/ecs-task"
     
     task_id = "web"
+    health_check_path = "/_hc"
     path_pattern = "/*"
     priority = 95
     container_image = "caravanacloud/ecomarkets-web:0.0.1"
@@ -47,13 +48,17 @@ module "web_task" {
     twilio_account_sid = var.twilio_account_sid
     twilio_auth_token = var.twilio_auth_token
     twilio_phone_from = var.twilio_phone_from
+
+    count_instances = 1
+
 }
 
 module "api_task" {
     source = "../modules/ecs-task"
     
     task_id = "api"
-    path_pattern = "/api/*"
+    health_check_path = "/api/_hc"
+    path_pattern = "/api*"
     priority = 50
     container_image = "caravanacloud/ecomarkets-api:0.0.1"
     container_port = 9091
@@ -82,13 +87,16 @@ module "api_task" {
     twilio_account_sid = var.twilio_account_sid
     twilio_auth_token = var.twilio_auth_token
     twilio_phone_from = var.twilio_phone_from
+
+    count_instances = 1
 }
 
 module "vdn_task" {
     source = "../modules/ecs-task"
     
     task_id = "vdn"
-    path_pattern = "/vdn/*"
+    health_check_path = "/vdn/_hc"
+    path_pattern = "/vdn*"
     priority = 40
     container_image = "caravanacloud/ecomarkets-vdn:0.0.1"
     container_port = 9092
@@ -117,13 +125,16 @@ module "vdn_task" {
     twilio_account_sid = var.twilio_account_sid
     twilio_auth_token = var.twilio_auth_token
     twilio_phone_from = var.twilio_phone_from
+
+    count_instances = 1
 }
 
 module "app_task" {
     source = "../modules/ecs-task"
     
     task_id = "app"
-    path_pattern = "/app/*"
+    health_check_path = "/app/"
+    path_pattern = "/app*"
     priority = 30
     container_image = "caravanacloud/ecomarkets-app:0.0.1"
     container_port = 9093
@@ -152,4 +163,6 @@ module "app_task" {
     twilio_account_sid = var.twilio_account_sid
     twilio_auth_token = var.twilio_auth_token
     twilio_phone_from = var.twilio_phone_from
+
+    count_instances = 0 //there is nothing for while
 }
