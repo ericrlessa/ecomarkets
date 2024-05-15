@@ -96,7 +96,10 @@ resource "aws_cognito_user_pool_client" "app_client" {
   ]
   auth_session_validity                         = 3
   callback_urls                                 = [
-    "https://ericlessa.com/vdn",
+    "https://${var.env_id}.${var.domain_name}/vdn",
+    "https://${var.env_id}.${var.domain_name}/api",
+    "https://${var.env_id}.${var.domain_name}/web",
+    "https://${var.env_id}.${var.domain_name}/",
   ]
   enable_propagate_additional_user_context_data = false
   enable_token_revocation                       = true
@@ -144,7 +147,7 @@ resource "aws_cognito_identity_provider" "google" {
 }
 
 resource "aws_cognito_user_pool_domain" "main" {
-  domain       = var.env_id
+  domain       = 'ecomarkets'
   user_pool_id = aws_cognito_user_pool.main.id
 }
 
