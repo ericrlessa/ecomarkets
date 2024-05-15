@@ -156,7 +156,7 @@ resource "aws_cognito_identity_provider" "google" {
 }
 
 resource "aws_cognito_user_pool_domain" "main" {
-  domain       = 'ecomarkets'
+  domain       = "ecomarkets"
   user_pool_id = aws_cognito_user_pool.main.id
 }
 
