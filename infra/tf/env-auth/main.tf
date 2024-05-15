@@ -13,6 +13,15 @@ provider "aws" {
   region = var.aws_region
 }
 
+data "aws_ssm_parameter" "oidc_google_id_text" {
+  name = var.oidc_google_id_ssm
+}
+
+data "aws_ssm_parameter" "oidc_google_secret_text" {
+  name = var.oidc_google_secret_ssm
+}
+
+
 resource "aws_cognito_user_pool" "main" {
   name = "${replace(var.env_id, "/[^a-zA-Z0-9_]/", "")}_user_pool"
   auto_verified_attributes  = [
@@ -136,8 +145,8 @@ resource "aws_cognito_identity_provider" "google" {
 
   provider_details = {
     authorize_scopes = "openid email profile"
-    client_id        = var.oidc_google_id_text
-    client_secret    = var.oidc_google_secret_text
+    client_id        = data.aws_ssm_parameter.oidc_google_id_text
+    client_secret    = data.aws_ssm_parameter.oidc_google_secret_text
   }
 
   attribute_mapping = {
